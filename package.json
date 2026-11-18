@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "typecheck": "tsc -p tsconfig.node.json",
     "preview": "vite preview",
     "sync:recipes": "node --experimental-strip-types scripts/sync-recipes.mjs",
     "test": "node --experimental-strip-types --test"
@@ -13,6 +14,7 @@
     "effect": "^4.1.2"
   },
   "devDependencies": {
+    "@types/node": "^22.20.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.6"
   },

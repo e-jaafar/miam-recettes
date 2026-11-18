@@ -1,0 +1,12 @@
+{
+  "Oignon": ["Oignons jaunes", "Oignons blancs", "Oignons rouges"],
+  "Lait": ["Lait demi écrémé", "Lait entier bio", "Lait entier pasteurisé", "Lait écrémé bio"],
+  "Beurre": ["Beurre bio", "Beurre fin"],
+  "Sucre": ["Sucre semoule", "Sucre blanc", "Sucre cristal"],
+  "Farine": ["Farine T55", "Farine T45", "Farine T65", "Farine blanche"],
+  "Huile neutre": ["Huile de tournesol", "Huile de colza", "Huile de pépin de raisin", "Huile végétale"],
+  "Crème liquide": ["Crème liquide UHT", "Crème liquide UHT 35%", "Crème liquide 30%", "Crème entière liquide", "Crème fleurette"],
+  "Citron": ["Citron jaune"],
+  "Tomate": ["Tomates rondes", "Tomates fraîches", "Tomates rouges"],
+  "Huile d’olive": ["Huile d'olive extra vierge", "Huile d'olive vierge", "Huile d'olive AOP"]
+}

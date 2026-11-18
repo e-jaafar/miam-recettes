@@ -10,7 +10,12 @@ const manualSchema = Schema.Array(Schema.Struct({
 }));
 export type ManualItem = typeof manualSchema.Type[number];
 
+// Version du format enregistré. La v1 utilise déjà les noms d’ingrédients
+// harmonisés : la migration des anciens alias ne tourne que pour les données sans version.
+export const stateVersion = 1;
+
 const stateSchema = Schema.Struct({
+  version: Schema.optionalKey(Schema.Number),
   favorites: Schema.Array(Schema.String),
   portions: Schema.Record(Schema.String, Schema.Number),
   checked: Schema.Array(Schema.String),
@@ -44,7 +49,7 @@ export const readState = (read: () => string | null) => Effect.try(read).pipe(
             if (quantity > 0 && quantity <= maxQuantity) pantry[key] = quantity;
           }
         }
-        for (const [name, variants] of Object.entries(ingredientAliases)) {
+        if (stored.version === undefined) for (const [name, variants] of Object.entries(ingredientAliases)) {
           for (const [variant, oldUnit] of Object.entries(variants)) {
             const quantity = quantities.value[variant];
             if (oldUnit === null || !(quantity > 0 && quantity <= maxQuantity)) continue;
@@ -74,5 +79,5 @@ export const readState = (read: () => string | null) => Effect.try(read).pipe(
 export const loadState = () => readState(() => localStorage.getItem(storageKey));
 
 export const saveState = (state: State) => Effect.try(() =>
-  localStorage.setItem(storageKey, JSON.stringify(state))
+  localStorage.setItem(storageKey, JSON.stringify({ version: stateVersion, ...state }))
 );

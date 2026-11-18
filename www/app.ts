@@ -47,6 +47,7 @@ let visibleResults = 30;
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] ?? char
 );
+const recipeHref = (recipe: Recipe) => `#/recette/${encodeURIComponent(recipe.id)}`;
 const hasPantry = () => Object.keys(saved.pantry).length > 0;
 const quantityText = (quantity: number, unit: string) => [format.format(quantity), unit].filter(Boolean).join(' ');
 
@@ -81,16 +82,16 @@ function renderNav(page: Page | undefined) {
 
 function favorite(recipe: Recipe) {
   const selected = saved.favorites.includes(recipe.id);
-  return `<button type="button" class="favorite" data-favorite="${recipe.id}" aria-label="Favori · ${escapeHtml(recipe.title)}" aria-pressed="${selected}">${icon('heart')}</button>`;
+  return `<button type="button" class="favorite" data-favorite="${escapeHtml(recipe.id)}" aria-label="Favori · ${escapeHtml(recipe.title)}" aria-pressed="${selected}">${icon('heart')}</button>`;
 }
 
 function picture(recipe: Recipe, eager = false) {
-  return `<img src="${import.meta.env.BASE_URL}assets/${recipe.id}.webp" alt="" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
+  return `<img src="${import.meta.env.BASE_URL}assets/${encodeURIComponent(recipe.id)}.webp" alt="" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
 }
 
 function meta(recipe: Recipe) {
   const time = recipe.minutes === null ? '' : `<span>${icon('clock')}${recipe.minutes} min</span>`;
-  return `<span>${recipe.category}</span>${time}${recipe.source ? '<span>METRO France</span>' : ''}`;
+  return `<span>${escapeHtml(recipe.category)}</span>${time}${recipe.source ? '<span>METRO France</span>' : ''}`;
 }
 
 function card(recipe: Recipe, featured = false, missing?: ReturnType<typeof missingIngredients>) {
@@ -99,10 +100,10 @@ function card(recipe: Recipe, featured = false, missing?: ReturnType<typeof miss
     ? `<strong>Il te manque ${missing.length}</strong><br>${missing.map(item => `${quantityText(item.quantity, item.unit)} · ${escapeHtml(item.name)}`).join(', ')}`
     : uncertain ? '' : 'Tu as tous les ingrédients';
   const label = featured ? (recipe.category === 'Sucré' ? 'Envie de sucré' : 'Envie de salé') : '';
-  return `<article class="recipe-card ${featured ? 'featured-card' : ''}" data-category="${recipe.category}">
+  return `<article class="recipe-card ${featured ? 'featured-card' : ''}" data-category="${escapeHtml(recipe.category)}">
     ${featured ? `<div class="card-label">${label}</div>` : ''}
-    ${recipe.photoId ? `<div class="card-photo"><a href="#/recette/${recipe.id}" tabindex="-1" aria-hidden="true">${picture(recipe, featured)}</a>${favorite(recipe)}</div>` : ''}
-    <div class="card-info"><div class="card-heading"><h3><a href="#/recette/${recipe.id}">${escapeHtml(recipe.title)}${recipe.photoId ? icon('diagonal') : ''}</a></h3>${recipe.photoId ? '' : favorite(recipe)}</div><p class="meta">${meta(recipe)}</p>
+    ${recipe.photoId ? `<div class="card-photo"><a href="${recipeHref(recipe)}" tabindex="-1" aria-hidden="true">${picture(recipe, featured)}</a>${favorite(recipe)}</div>` : ''}
+    <div class="card-info"><div class="card-heading"><h3><a href="${recipeHref(recipe)}">${escapeHtml(recipe.title)}${recipe.photoId ? icon('diagonal') : ''}</a></h3>${recipe.photoId ? '' : favorite(recipe)}</div><p class="meta">${meta(recipe)}</p>
     ${missing ? `<p class="match-info ${!missing.length && !uncertain ? 'ready' : ''}">${matchText}${uncertain ? `<span class="uncertain">${uncertain} ligne(s) à vérifier</span>` : ''}</p>` : ''}</div>
   </article>`;
 }
@@ -185,6 +186,15 @@ function renderResults(expand = false) {
     ? visible.slice(0, visibleResults).map(({ recipe, missing }) => card(recipe, false, missing)).join('')
     : `<div class="empty"><p>${emptyMessage}</p>${reset}</div>`;
   element('[data-more]').hidden = visible.length <= visibleResults;
+}
+
+let resultsTimeout: ReturnType<typeof setTimeout> | undefined;
+/** Regroupe les frappes rapides : la liste n’est recalculée qu’après une courte pause. */
+function scheduleResults() {
+  clearTimeout(resultsTimeout);
+  resultsTimeout = setTimeout(() => {
+    if (document.querySelector('#results')) renderResults();
+  }, 120);
 }
 
 function renderPantry() {
@@ -381,20 +391,20 @@ function shoppingPage() {
     ${selected.length ? `<div class="shopping-layout">
       <section aria-labelledby="list-title"><h2 id="list-title">À mettre dans le panier</h2>
       ${items.length ? `<p class="result-count" id="progress" role="status"></p>
-      <ul class="shopping-items">${items.map((item, index) => `<li><label>
-        <input type="checkbox" data-check="${index}" ${saved.checked.includes(item.key) ? 'checked' : ''}>
+      <ul class="shopping-items">${items.map(item => `<li><label>
+        <input type="checkbox" data-check="${escapeHtml(item.key)}" ${saved.checked.includes(item.key) ? 'checked' : ''}>
         <span>${escapeHtml(item.name)}</span><strong>${[format.format(item.quantity), item.unit].filter(Boolean).join(' ')}</strong>
       </label><a class="product-search" href="${storeCatalogSearch(item.name)}" target="_blank" rel="noopener noreferrer" aria-label="Chercher ${escapeHtml(item.name)} dans les catalogues des enseignes">Chercher en ligne ${icon('diagonal')}</a></li>`).join('')}</ul>
       <button class="button primary stock-purchases" type="button" data-stock>Ranger les achats cochés</button>`
       : '<p>Les quantités calculables sont couvertes.</p>'}
       ${uncertain.length ? `<div class="source-ingredients"><h3>Ingrédients à vérifier</h3>
         <p>Précise une quantité pour ajouter l’ingrédient à ta liste.</p>
-        <ul>${uncertain.map(item => `<li>${escapeHtml(item.detail)} · <a href="#/recette/${item.recipe.id}">${escapeHtml(item.recipe.title)}</a>
+        <ul>${uncertain.map(item => `<li>${escapeHtml(item.detail)} · <a href="${recipeHref(item.recipe)}">${escapeHtml(item.recipe.title)}</a>
           <button class="button" type="button" data-clarify="${escapeHtml(item.source)}" data-name="${escapeHtml(item.name)}" aria-label="Préciser ${escapeHtml(item.name || item.detail)}">Préciser</button></li>`).join('')}</ul>
       </div>` : ''}</section>
       <aside class="shopping-recipes" aria-labelledby="included-title"><h2 id="included-title">Recettes dans la liste</h2>
-        <ul>${selected.map(recipe => `<li><div><a href="#/recette/${recipe.id}">${escapeHtml(recipe.title)}</a><span>${recipe.baseServings === null ? 'Portions non indiquées' : `${saved.portions[recipe.id]} pers.`}</span></div>
-          <button type="button" class="icon-button" data-remove="${recipe.id}" aria-label="Retirer ${escapeHtml(recipe.title)} des courses">${icon('close')}</button></li>`).join('')}</ul>
+        <ul>${selected.map(recipe => `<li><div><a href="${recipeHref(recipe)}">${escapeHtml(recipe.title)}</a><span>${recipe.baseServings === null ? 'Portions non indiquées' : `${saved.portions[recipe.id]} pers.`}</span></div>
+          <button type="button" class="icon-button" data-remove="${escapeHtml(recipe.id)}" aria-label="Retirer ${escapeHtml(recipe.title)} des courses">${icon('close')}</button></li>`).join('')}</ul>
       </aside>
     </div>` : '<div class="empty"><h2>Ta liste est vide</h2><p>Ouvre une recette et ajoute ses ingrédients aux courses.</p><a class="button primary" href="#/">Choisir une recette</a></div>'}
     ${manualShopping()}
@@ -429,7 +439,7 @@ function creditsPage() {
 
 function renderRoute(focus = true) {
   const route = location.hash || '#/';
-  const recipe = recipes.find(item => route === `#/recette/${item.id}`);
+  const recipe = recipes.find(item => route === recipeHref(item));
   const page = recipe ? 'recipe' : pages[route];
   if (recipe && currentRoute !== route) {
     if (currentRoute === '#/favoris' || currentRoute === '#/courses' || currentRoute === '#/') previousRoute = currentRoute;
@@ -538,7 +548,7 @@ main.addEventListener('input', event => {
   if (event.target.id === 'include-ingredients' || event.target.id === 'exclude-ingredients') {
     if (event.target.id === 'include-ingredients') includeIngredients = event.target.value;
     else excludeIngredients = event.target.value;
-    renderResults();
+    scheduleResults();
     return;
   }
   if (event.target.id === 'shop-area') {
@@ -547,7 +557,7 @@ main.addEventListener('input', event => {
     return;
   }
   query = event.target.value;
-  renderResults();
+  scheduleResults();
 });
 
 main.addEventListener('pointerdown', event => {
@@ -615,7 +625,8 @@ main.addEventListener('change', event => {
     return;
   }
   if (!event.target.matches('[data-check]')) return;
-  const item = shoppingItems(saved.portions, saved.pantry)[Number(event.target.dataset.check)];
+  const key = event.target.dataset.check;
+  const item = shoppingItems(saved.portions, saved.pantry).find(entry => entry.key === key);
   if (!item) return;
   saved.checked = event.target.checked
     ? [...new Set([...saved.checked, item.key])]
@@ -675,7 +686,7 @@ main.addEventListener('click', event => {
       renderRoute(false);
       (main.querySelector<HTMLElement>('.favorite, .empty a') ?? main).focus();
     } else {
-      main.querySelectorAll(`[data-favorite="${data.favorite}"]`).forEach(control => control.setAttribute('aria-pressed', String(selected)));
+      main.querySelectorAll(`[data-favorite="${CSS.escape(data.favorite)}"]`).forEach(control => control.setAttribute('aria-pressed', String(selected)));
     }
     persist(selected ? 'Recette ajoutée aux favoris.' : 'Recette retirée des favoris.');
   }

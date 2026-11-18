@@ -6,7 +6,11 @@ import { findIngredients, findRecipes, ingredientNames, missingIngredients, pant
 import { readState } from '../www/storage.ts';
 import ingredientAliases from '../www/ingredient-aliases.json' with { type: 'json' };
 import { normalizeIngredientName } from '../www/ingredient-name.ts';
+import ingredientSubstitutes from '../www/ingredient-substitutes.json' with { type: 'json' };
 import { storesMap, storeCatalogSearch } from '../www/stores.ts';
+
+/** @param {import('../www/recipes.ts').Recipe['ingredients']} ingredients */
+const dish = ingredients => ({ ingredients });
 
 test('la recherche combine les ingrédients et la catégorie, même sans accents', () => {
   const matches = findRecipes('  oeuf  banane ', 'Sucré');
@@ -143,7 +147,7 @@ test('les deux recettes de bœuf Wellington sont distinguées par leur chef', ()
 
 test('un oignon jaune remplace un oignon générique sans dépenser deux fois le même stock', () => {
   const yellow = pantryKey('Oignons jaunes', '');
-  const recipe = { ingredients: [[1, '', 'Oignon'], [1, '', 'Oignons jaunes']] };
+  const recipe = dish([[1, '', 'Oignon'], [1, '', 'Oignons jaunes']]);
   const stock = { [yellow]: 1 };
   assert.deepEqual(recipeStock(recipe, stock).missing, [{ name: 'Oignon', unit: '', quantity: 1 }]);
   assert.deepEqual(recipeStock(recipe, { [yellow]: 2 }).used, { [yellow]: 2 });
@@ -154,4 +158,29 @@ test('le vide-frigo applique conjointement les inclusions et les exclusions', ()
   const results = findRecipes('', 'Salé', 'riz, pois chiches', 'lait');
   assert(results.some(recipe => recipe.id === 'riz-pois-chiches'));
   assert(results.every(recipe => !recipe.ingredients.some(([, , name]) => /lait/i.test(name))));
+});
+
+test('un stock en millilitres couvre un besoin en grammes du même ingrédient', () => {
+  const recipe = dish([[100, 'g', 'Crème liquide UHT']]);
+  const ml = pantryKey('Crème liquide UHT', 'ml');
+  assert.deepEqual(recipeStock(recipe, { [ml]: 150 }).missing, []);
+  assert.deepEqual(recipeStock(recipe, { [ml]: 60 }).missing, [{ name: 'Crème liquide UHT', unit: 'g', quantity: 40 }]);
+  const oil = dish([[2, 'c. à soupe', 'Huile d’olive']]);
+  assert.deepEqual(recipeStock(oil, { [pantryKey('Huile d’olive', 'g')]: 100 }).missing, []);
+});
+
+test('les substituts déclarés existent dans la banque d’ingrédients et servent au calcul', () => {
+  for (const [name, list] of Object.entries(ingredientSubstitutes)) {
+    assert(ingredientNames.includes(name), name);
+    for (const substitute of list) assert(ingredientNames.includes(substitute), substitute);
+  }
+  const recipe = dish([[100, 'g', 'Sucre']]);
+  const { missing, replacements } = recipeStock(recipe, { 'Sucre semoule': 200 });
+  assert.deepEqual(missing, []);
+  assert.deepEqual(replacements.Sucre, ['Sucre semoule']);
+});
+
+test('les données déjà versionnées ne repassent pas par la migration des alias', () => {
+  const stored = { version: 1, pantry: { 'Beurre doux': 30, Beurre: 10 }, portions: {}, checked: [], favorites: [] };
+  assert.deepEqual(Effect.runSync(readState(() => JSON.stringify(stored))).pantry, { Beurre: 10 });
 });

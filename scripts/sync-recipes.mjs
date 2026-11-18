@@ -41,6 +41,7 @@ const unitsByName = new Map(localRecipes.flatMap(recipe => recipe.ingredients.ma
 for (const [name, units] of multipleUnits) unitsByName.set(name, units[0]);
 const output = new URL('../www/metro-recipes.json', import.meta.url);
 const fractions = { '¼': '1/4', '½': '1/2', '¾': '3/4', '⅓': '1/3', '⅔': '2/3', '⅛': '1/8' };
+/** @type {Map<string, [string, number]>} */
 const unitFactors = new Map([
   ['', ['', 1]], ['piece', ['', 1]], ['pieces', ['', 1]], ['unite', ['', 1]], ['unites', ['', 1]],
   ['g', ['g', 1]], ['gr', ['g', 1]], ['grammes', ['g', 1]], ['kg', ['g', 1000]],
@@ -52,7 +53,7 @@ const unitFactors = new Map([
   ['cuil a cafe', ['c. à café', 1]], ['cuillere a cafe', ['c. à café', 1]], ['cuilleres a cafe', ['c. à café', 1]],
   ...['gousse', 'botte', 'branche', 'feuille', 'sachet', 'pincee', 'tranche'].flatMap(unit => {
     const label = unit === 'pincee' ? 'pincée' : unit === 'tranche' ? 'tranches' : unit;
-    return [[unit, [label, 1]], [unit + 's', [label, 1]]];
+    return /** @type {[string, [string, number]][]} */ ([[unit, [label, 1]], [unit + 's', [label, 1]]]);
   })
 ]);
 
