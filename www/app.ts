@@ -15,8 +15,13 @@ const paths = {
   back: '<path d="M20 12H4m7-7-7 7 7 7"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   minus: '<path d="M5 12h14"/>',
-  close: '<path d="m6 6 12 12M18 6 6 18"/>'
+  close: '<path d="m6 6 12 12M18 6 6 18"/>',
+  sweet: '<path d="M5 12h14l-2 8H7zM5 12a7 5 0 0 1 14 0M12 4v3"/>',
+  savory: '<path d="M4 10h16v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM2 10h2m16 0h2M9 6c0-1 1-1 1-2m4 2c0-1 1-1 1-2"/>',
+  drink: '<path d="M6 4h12l-2 16H8zM7 9h10M14 4l3-2"/>',
+  cook: '<path d="M4 20h16M6 20V10a6 6 0 0 1 12 0v10M12 4V2"/>'
 };
+const categoryIcon = (category: string) => category === 'Sucré' ? 'sweet' : category === 'Boissons' ? 'drink' : 'savory';
 const icon = (name: keyof typeof paths) => `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths[name]}</svg>`;
 function element<T extends HTMLElement = HTMLElement>(selector: string): T {
   const match = document.querySelector<T>(selector);
@@ -44,6 +49,10 @@ let noticeTimeout: ReturnType<typeof setTimeout>;
 let showAll = false;
 let shopArea = '';
 let visibleResults = 30;
+let quickOnly = false;
+let cooking = false;
+let wakeLock: { release(): Promise<void> } | undefined;
+const doneSteps = new Map<string, Set<number>>();
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] ?? char
 );
@@ -102,8 +111,10 @@ function card(recipe: Recipe, featured = false, missing?: ReturnType<typeof miss
   const label = featured ? (recipe.category === 'Sucré' ? 'Envie de sucré' : 'Envie de salé') : '';
   return `<article class="recipe-card ${featured ? 'featured-card' : ''}" data-category="${escapeHtml(recipe.category)}">
     ${featured ? `<div class="card-label">${label}</div>` : ''}
-    ${recipe.photoId ? `<div class="card-photo"><a href="${recipeHref(recipe)}" tabindex="-1" aria-hidden="true">${picture(recipe, featured)}</a>${favorite(recipe)}</div>` : ''}
-    <div class="card-info"><div class="card-heading"><h3><a href="${recipeHref(recipe)}">${escapeHtml(recipe.title)}${recipe.photoId ? icon('diagonal') : ''}</a></h3>${recipe.photoId ? '' : favorite(recipe)}</div><p class="meta">${meta(recipe)}</p>
+    ${recipe.photoId
+      ? `<div class="card-photo"><a href="${recipeHref(recipe)}" tabindex="-1" aria-hidden="true">${picture(recipe, featured)}</a>${favorite(recipe)}</div>`
+      : `<div class="card-art-wrap"><a class="card-art" data-category="${escapeHtml(recipe.category)}" href="${recipeHref(recipe)}" tabindex="-1" aria-hidden="true">${icon(categoryIcon(recipe.category))}</a>${favorite(recipe)}</div>`}
+    <div class="card-info"><div class="card-heading"><h3><a href="${recipeHref(recipe)}">${escapeHtml(recipe.title)}${icon('diagonal')}</a></h3></div><p class="meta">${meta(recipe)}</p>
     ${missing ? `<p class="match-info ${!missing.length && !uncertain ? 'ready' : ''}">${matchText}${uncertain ? `<span class="uncertain">${uncertain} ligne(s) à vérifier</span>` : ''}</p>` : ''}</div>
   </article>`;
 }
@@ -143,7 +154,7 @@ function home() {
         ${['', ...categories].map(value => `<button type="button" data-category-filter="${value}" aria-pressed="${category === value}">${value || 'Tout'}</button>`).join('')}
       </div>
       <label class="catalog-toggle" id="catalog-mode" hidden><input id="show-all" type="checkbox" ${showAll ? 'checked' : ''}> Afficher aussi les autres recettes</label>
-      <details class="recipe-filters" ${includeIngredients || excludeIngredients || readyOnly || everydayOnly ? 'open' : ''}>
+      <details class="recipe-filters" ${includeIngredients || excludeIngredients || readyOnly || everydayOnly || quickOnly ? 'open' : ''}>
         <summary>Affiner les recettes</summary>
         <div class="filter-fields">
           <label>À inclure <input id="include-ingredients" type="search" placeholder="Ex. riz, carotte" value="${escapeHtml(includeIngredients)}"></label>
@@ -152,6 +163,7 @@ function home() {
         <p>Sépare les ingrédients par des virgules. L’exclusion porte sur les ingrédients indiqués dans la recette.</p>
         <label class="catalog-toggle"><input id="ready-only" type="checkbox" ${readyOnly ? 'checked' : ''}> Réalisables avec mon stock</label>
         <label class="catalog-toggle"><input id="everyday-only" type="checkbox" ${everydayOnly ? 'checked' : ''}> Recettes du quotidien</label>
+        <label class="catalog-toggle"><input id="quick-only" type="checkbox" ${quickOnly ? 'checked' : ''}> Prêt en 30 min max</label>
       </details>
       <p class="result-count" id="result-count" role="status"></p>
       <div class="recipe-grid" id="results"></div>
@@ -162,7 +174,9 @@ function home() {
 
 function renderResults(expand = false) {
   if (!expand) visibleResults = 30;
-  const matches = findRecipes(query, category, includeIngredients, excludeIngredients).filter(recipe => !everydayOnly || !recipe.source);
+  syncUrl();
+  const matches = findRecipes(query, category, includeIngredients, excludeIngredients)
+    .filter(recipe => (!everydayOnly || !recipe.source) && (!quickOnly || (recipe.minutes !== null && recipe.minutes <= 30)));
   const hasStock = hasPantry();
   const withPantry = hasStock ? pantryMatches(matches, saved.pantry) : [];
   const results: { recipe: Recipe; missing?: ReturnType<typeof missingIngredients> }[] = hasStock ? withPantry : matches.map(recipe => ({ recipe }));
@@ -181,7 +195,7 @@ function renderResults(expand = false) {
   const emptyMessage = hasStock && !showAll
     ? 'Aucune recette ne correspond. Essaie d’ajouter un autre ingrédient.'
     : 'Aucune recette pour cette recherche.';
-  const reset = query || category || includeIngredients || excludeIngredients || readyOnly || everydayOnly ? '<button class="button" type="button" data-reset>Effacer les filtres</button>' : '';
+  const reset = query || category || includeIngredients || excludeIngredients || readyOnly || everydayOnly || quickOnly ? '<button class="button" type="button" data-reset>Effacer les filtres</button>' : '';
   element('#results').innerHTML = visible.length
     ? visible.slice(0, visibleResults).map(({ recipe, missing }) => card(recipe, false, missing)).join('')
     : `<div class="empty"><p>${emptyMessage}</p>${reset}</div>`;
@@ -195,6 +209,33 @@ function scheduleResults() {
   resultsTimeout = setTimeout(() => {
     if (document.querySelector('#results')) renderResults();
   }, 120);
+}
+
+/** Les filtres du catalogue vivent dans l’URL : une recherche se partage et survit au rechargement. */
+function filtersFromUrl(search: string) {
+  const params = new URLSearchParams(search);
+  query = params.get('q') ?? '';
+  category = categories.includes(params.get('cat') ?? '') ? params.get('cat')! : '';
+  includeIngredients = params.get('avec') ?? '';
+  excludeIngredients = params.get('sans') ?? '';
+  readyOnly = params.has('pret');
+  everydayOnly = params.has('quotidien');
+  quickOnly = params.has('rapide');
+}
+
+function syncUrl() {
+  const params = new URLSearchParams();
+  if (query) params.set('q', query);
+  if (category) params.set('cat', category);
+  if (includeIngredients) params.set('avec', includeIngredients);
+  if (excludeIngredients) params.set('sans', excludeIngredients);
+  if (readyOnly) params.set('pret', '');
+  if (everydayOnly) params.set('quotidien', '');
+  if (quickOnly) params.set('rapide', '');
+  const search = params.toString().replace(/=(&|$)/g, '$1');
+  const hash = search ? `#/?${search}` : '#/';
+  if (location.hash !== hash && !(hash === '#/' && !location.hash)) history.replaceState(history.state, '', hash);
+  currentRoute = hash;
 }
 
 function renderPantry() {
@@ -277,10 +318,13 @@ function recipePage(recipe: Recipe) {
     '#/favoris': 'Mes favoris',
     '#/courses': 'Mes courses'
   }[previousRoute as '#/favoris' | '#/courses'] ?? 'Toutes les recettes';
+  const media = recipe.photoId
+    ? `<div class="detail-photo">${picture(recipe, true)}</div>`
+    : `<div class="detail-art" aria-hidden="true">${icon(categoryIcon(recipe.category))}</div>`;
   return `<div class="shell inner-page">
     <a class="back-link" href="${previousRoute}">${icon('back')} ${backLabel}</a>
-    <section class="recipe-intro ${recipe.photoId ? '' : 'text-recipe'}" aria-labelledby="recipe-title">
-      ${recipe.photoId ? `<div class="detail-photo">${picture(recipe, true)}</div>` : ''}
+    <section class="recipe-intro" data-category="${escapeHtml(recipe.category)}" aria-labelledby="recipe-title">
+      ${media}
       <div class="recipe-summary">
         <p class="meta">${meta(recipe)}</p>
         <h1 id="recipe-title">${escapeHtml(recipe.title)}</h1>
@@ -307,8 +351,10 @@ function recipePage(recipe: Recipe) {
           <p>${recipe.baseServings === null ? 'La source ne précise pas le nombre de portions.' : `Les lignes ci-dessous correspondent aux indications d’origine pour ${recipe.baseServings} portion(s).`} Ces lignes ne sont pas incluses dans le calcul des courses.</p>
           <ul>${recipe.unmeasured.map(item => `<li>${escapeHtml(item.detail)}</li>`).join('')}</ul></div>` : ''}
       </section>
-      <section aria-labelledby="steps-title"><h2 id="steps-title">Préparation</h2>
-        <ol class="steps">${recipe.steps.map(step => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
+      <section aria-labelledby="steps-title" id="steps-section"><h2 id="steps-title">Préparation</h2>
+        <button class="button cook-mode-toggle" type="button" data-cook-mode aria-pressed="false">${icon('cook')} Mode cuisine</button>
+        <p class="cook-mode-hint" id="cook-mode-hint" hidden>Touche une étape pour la cocher. L’écran reste allumé.</p>
+        <ol class="steps" id="steps"></ol>
         <div class="cook-actions">
           <button class="button primary" type="button" data-cook>J’ai cuisiné</button>
           <button class="button" type="button" data-undo-cook hidden>Annuler la déduction</button>
@@ -317,6 +363,39 @@ function recipePage(recipe: Recipe) {
       </section>
     </div>
   </div>`;
+}
+
+function renderSteps(recipe: Recipe) {
+  const done = doneSteps.get(recipe.id) ?? new Set<number>();
+  element('#steps-section').classList.toggle('cooking', cooking);
+  element('[data-cook-mode]').setAttribute('aria-pressed', String(cooking));
+  const hint = element('#cook-mode-hint');
+  hint.hidden = !cooking;
+  hint.textContent = wakeLock ? 'Touche une étape pour la cocher. L’écran reste allumé.' : 'Touche une étape pour la cocher.';
+  element('#steps').innerHTML = recipe.steps.map((step, index) => cooking
+    ? `<li role="checkbox" tabindex="0" data-step="${index}" aria-checked="${done.has(index)}">${escapeHtml(step)}</li>`
+    : `<li>${escapeHtml(step)}</li>`).join('');
+}
+
+/** Mode cuisine : empêche la mise en veille de l’écran quand le navigateur le permet. */
+async function setCooking(enabled: boolean) {
+  cooking = enabled;
+  if (!enabled) {
+    await wakeLock?.release().catch(() => undefined);
+    wakeLock = undefined;
+    return;
+  }
+  const api = (navigator as Navigator & { wakeLock?: { request(type: 'screen'): Promise<{ release(): Promise<void> }> } }).wakeLock;
+  wakeLock = await api?.request('screen').catch(() => undefined);
+}
+
+function toggleStep(recipe: Recipe, index: number) {
+  const done = doneSteps.get(recipe.id) ?? new Set<number>();
+  if (done.has(index)) done.delete(index); else done.add(index);
+  doneSteps.set(recipe.id, done);
+  renderSteps(recipe);
+  element<HTMLElement>(`[data-step="${index}"]`).focus();
+  if (done.size === recipe.steps.length) announce('Toutes les étapes sont faites. Bon appétit !');
 }
 
 function renderServings(activeRecipe: Recipe) {
@@ -439,12 +518,16 @@ function creditsPage() {
 
 function renderRoute(focus = true) {
   const route = location.hash || '#/';
+  const [path, search = ''] = route.split('?');
   const recipe = recipes.find(item => route === recipeHref(item));
-  const page = recipe ? 'recipe' : pages[route];
+  const page = recipe ? 'recipe' : pages[path];
+  const previousPath = currentRoute.split('?')[0];
   if (recipe && currentRoute !== route) {
-    if (currentRoute === '#/favoris' || currentRoute === '#/courses' || currentRoute === '#/') previousRoute = currentRoute;
+    if (previousPath === '#/favoris' || previousPath === '#/courses' || previousPath === '#/') previousRoute = currentRoute;
     servings = saved.portions[recipe.id] ?? 2;
   }
+  if (page === 'home' && currentRoute !== route) filtersFromUrl(search);
+  if (currentRoute !== route) setCooking(false);
   currentRoute = route;
   activeRecipe = recipe;
   renderNav(page);
@@ -457,7 +540,10 @@ function renderRoute(focus = true) {
     renderPantry();
     renderResults();
   }
-  if (recipe) renderServings(recipe);
+  if (recipe) {
+    renderServings(recipe);
+    renderSteps(recipe);
+  }
   if (page === 'shopping') {
     element<HTMLInputElement>('#shop-area').value = shopArea;
     renderProgress();
@@ -569,6 +655,11 @@ main.addEventListener('focusout', event => {
 });
 
 main.addEventListener('keydown', event => {
+  if (event.target instanceof HTMLElement && event.target.dataset.step && activeRecipe && (event.key === ' ' || event.key === 'Enter')) {
+    event.preventDefault();
+    toggleStep(activeRecipe, Number(event.target.dataset.step));
+    return;
+  }
   const input = event.target;
   if (!(input instanceof HTMLInputElement) || input.id !== 'pantry-query' || event.isComposing) return;
   const list = element('#pantry-options');
@@ -613,9 +704,10 @@ main.addEventListener('change', event => {
     }
     return;
   }
-  if (event.target.id === 'ready-only' || event.target.id === 'everyday-only') {
+  if (event.target.id === 'ready-only' || event.target.id === 'everyday-only' || event.target.id === 'quick-only') {
     if (event.target.id === 'ready-only') readyOnly = event.target.checked;
-    else everydayOnly = event.target.checked;
+    else if (event.target.id === 'everyday-only') everydayOnly = event.target.checked;
+    else quickOnly = event.target.checked;
     renderResults();
     return;
   }
@@ -638,6 +730,11 @@ main.addEventListener('change', event => {
 main.addEventListener('click', event => {
   const target = event.target;
   if (!(target instanceof Element)) return;
+  const step = target.closest<HTMLElement>('[data-step]');
+  if (step && activeRecipe) {
+    toggleStep(activeRecipe, Number(step.dataset.step));
+    return;
+  }
   const option = target.closest<HTMLElement>('[data-ingredient]');
   if (option?.dataset.ingredient) {
     selectIngredient(option.dataset.ingredient);
@@ -674,7 +771,7 @@ main.addEventListener('click', event => {
   }
   if ('reset' in data) {
     query = includeIngredients = excludeIngredients = '';
-    readyOnly = everydayOnly = false;
+    readyOnly = everydayOnly = quickOnly = false;
     category = '';
     renderRoute(false);
     element('.search input').focus();
@@ -689,6 +786,13 @@ main.addEventListener('click', event => {
       main.querySelectorAll(`[data-favorite="${CSS.escape(data.favorite)}"]`).forEach(control => control.setAttribute('aria-pressed', String(selected)));
     }
     persist(selected ? 'Recette ajoutée aux favoris.' : 'Recette retirée des favoris.');
+  }
+  if ('cookMode' in data && activeRecipe) {
+    const recipe = activeRecipe;
+    setCooking(!cooking).then(() => {
+      renderSteps(recipe);
+      if (cooking) announce(wakeLock ? 'Mode cuisine activé : l’écran reste allumé.' : 'Mode cuisine activé.');
+    });
   }
   if (data.serving && activeRecipe) {
     servings += Number(data.serving);
@@ -765,4 +869,8 @@ element('.skip-link').addEventListener('click', event => {
   main.focus();
 });
 window.addEventListener('hashchange', () => renderRoute());
+document.addEventListener('visibilitychange', () => {
+  // Le navigateur libère le verrou quand l’onglet passe en arrière-plan : on le reprend au retour.
+  if (cooking && document.visibilityState === 'visible') setCooking(true);
+});
 renderRoute(false);

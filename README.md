@@ -4,9 +4,13 @@ Miam! est une app de recettes en français, issue de la piste Miam! du prototype
 
 ## Lancer l’app
 
-Avec Node.js 22.18 ou plus récent, lancer `npm ci`, puis `npm run dev` et ouvrir [Miam!](http://127.0.0.1:4173/). L’application utilise TypeScript, Effect pour valider et gérer le stockage local, et Vite pour produire le site. `npm test` vérifie la recherche, les courses, le stockage et la présence des photos locales. `npm run build` vérifie les types et produit le site dans `dist/`. `npm run preview` sert cette version localement.
+Avec Node.js 22.18 ou plus récent, lancer `npm ci`, puis `npm run dev` et ouvrir [Miam!](http://127.0.0.1:4173/). L’application utilise TypeScript, Effect pour valider et gérer le stockage local, et Vite pour produire le site. `npm run typecheck` vérifie aussi les types des scripts et des tests. `npm test` vérifie la recherche, les courses, le stockage et la présence des photos locales. `npm run build` vérifie les types et produit le site dans `dist/`. `npm run preview` sert cette version localement.
 
 Rechercher un ingrédient et saisir la quantité disponible. L’app classe les recettes pour deux portions selon ce qu’il manque, puis recalcule les besoins quand les portions changent sur la fiche.
+
+Les filtres du catalogue (recherche, catégorie, ingrédients à inclure ou exclure, « Prêt en 30 min max ») sont gardés dans l’adresse de la page : une recherche se partage par lien et survit au rechargement. Sur une fiche, **Mode cuisine** agrandit les étapes, permet de les cocher et garde l’écran allumé quand le navigateur le permet.
+
+Si un ingrédient existe en grammes et en volume, le stock de l’un couvre l’autre avec une densité approchée (0,92 pour les huiles, 1 sinon). Les équivalences entre ingrédients (par exemple *Sucre semoule* pour *Sucre*) se règlent dans `www/ingredient-substitutes.json`. L’app suit le thème clair ou sombre de l’appareil.
 
 Les courses additionnent les besoins des recettes ajoutées et déduisent le stock du garde-manger. Cocher les achats, puis sélectionner **Ranger les achats cochés** pour ajouter les quantités indiquées au garde-manger. Modifier ces quantités si le format acheté diffère.
 

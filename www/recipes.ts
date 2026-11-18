@@ -6,7 +6,7 @@ import ingredientSubstitutes from './ingredient-substitutes.json' with { type: '
 
 // Le catalogue METRO (~900 Ko) est chargé dans un fichier à part : il est mis en
 // cache indépendamment du code de l’app et n’alourdit plus le bundle principal.
-const { default: imported } = await import('./metro-recipes.json', { with: { type: 'json' } });
+const { default: imported } = await import('./metro-catalog.ts');
 
 export const categories = ['Sucré', 'Salé', 'Boissons'];
 
