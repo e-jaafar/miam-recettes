@@ -1,0 +1,645 @@
+{
+  "Agar Agar": {
+    "Agar-agar": "g"
+  },
+  "Ail": {
+    "Ails": "gousse",
+    "D'ail": "gousse",
+    "Gousse d'ail": "",
+    "Gousses d'ail": ""
+  },
+  "Ail haché": {
+    "Ail, hachées": "gousse"
+  },
+  "Amidon de maïs": {
+    "Maïzena": "g",
+    "Maïzena fleur de maïs": "g"
+  },
+  "Artichaut poivrade": {
+    "Artichauts poivrade": ""
+  },
+  "Aubergine": {
+    "Aubergines": ""
+  },
+  "Avocat": {
+    "Avocats": ""
+  },
+  "Baie de genièvre": {
+    "Baies de genièvre": ""
+  },
+  "Baie rose": {
+    "Baies roses": ""
+  },
+  "Betterave jaune": {
+    "Betteraves jaunes": "g"
+  },
+  "Betterave rouge": {
+    "Betteraves rouges": "g"
+  },
+  "Betterave rouge crue": {
+    "Betteraves rouge crues": ""
+  },
+  "Beurre": {
+    "- Beurre": "g",
+    "Beurre (pour la cuisson)": "g",
+    "Beurre doux": "g",
+    "Beurre doux en rouleau": "g",
+    "Beurre finition": "g",
+    "Beurre frais": "g"
+  },
+  "Beurre demi sel": {
+    "Beurre demi-sel": "g",
+    "Beurre demi-sel METRO Chef": "g",
+    "Beurre moulé demi-sel": "c. à café",
+    "Beurre ½ sel": "g"
+  },
+  "Beurre fondu": {
+    "Beurre fondu tiède": "g"
+  },
+  "Beurre pommade": {
+    "Beurre doux en pommade": "g",
+    "Beurre pommade souple": "g"
+  },
+  "Blanc d'œuf liquide": {
+    "Blancs d'œufs liquides": "g"
+  },
+  "Blanc de poireau": {
+    "Blancs de poireaux": ""
+  },
+  "Blancs d'œufs": {
+    "Blanc d'oeuf": "g",
+    "Blanc d'œuf moyen": "",
+    "Blanc d'œufs": "g",
+    "Blanc œuf": "g",
+    "Blancs d'œuf": "g"
+  },
+  "Bœuf haché": {
+    "Haché de bœuf": "g",
+    "Viande de bœuf hachée": "g"
+  },
+  "Bouillon de légume": {
+    "Bouillon de légumes": "ml"
+  },
+  "Bouillon de volaille": {
+    "Bouillon de poule": "g",
+    "Bouillon de poulet": "ml",
+    "Bouillon de volailles": "g"
+  },
+  "Brocoli": {
+    "Brocolis": "g"
+  },
+  "Cacao en poudre": {
+    "Cacao poudre": "g"
+  },
+  "Capron": {
+    "Câprons": "g"
+  },
+  "Carotte": {
+    "- Carottes": "g"
+  },
+  "Carotte jaune": {
+    "Carottes jaunes": ""
+  },
+  "Carotte noire": {
+    "Carotte noires": "g"
+  },
+  "Carotte orange": {
+    "Carottes orange": "g",
+    "Carottes oranges": ""
+  },
+  "Carottes des Sables": {
+    "Carottes sables": "g"
+  },
+  "Cébette": {
+    "Cébettes": ""
+  },
+  "Céleri": {
+    "Céleris": ""
+  },
+  "Céleri Branche": {
+    "Céleri en branche": "branche",
+    "Céleris branche": "g"
+  },
+  "Céleri rave": {
+    "Céleris raves": "g"
+  },
+  "Cumin en poudre": {
+    "De cumin en poudre": "g"
+  },
+  "Cèpe": {
+    "Cèpes": ""
+  },
+  "Champignon crème": {
+    "Champignons crème": ""
+  },
+  "Champignon de Paris": {
+    "Champignons de Paris": "g"
+  },
+  "Champignons": {
+    "- Champignons": "g",
+    "Champignon": "g"
+  },
+  "Citron caviar": {
+    "Citrons caviar": ""
+  },
+  "Citron confit": {
+    "Citrons confits": "g"
+  },
+  "Citron jaune": {
+    "Citrons jaunes": ""
+  },
+  "Citron vert": {
+    "Citrons verts": ""
+  },
+  "Concentré de tomate": {
+    "Concentré de tomates": "g"
+  },
+  "Concombre": {
+    "Concombres": "g"
+  },
+  "Coriandre": {
+    "Corriandre": "botte"
+  },
+  "Crème 35%": {
+    "Crème 35 %": "g",
+    "Crème 35% (Pour monter mousseux)": "g",
+    "Crème 35% M.G.": "g",
+    "Crème 35% MG": "g"
+  },
+  "Crème de marron": {
+    "Crème de marrons": "g"
+  },
+  "Crème fouettée 35%": {
+    "Crème fouettée 35% M.G.": "g"
+  },
+  "Crème liquide 30%": {
+    "Crème liquide 30% MT": "ml"
+  },
+  "Crème liquide 35%": {
+    "Crème liquide 35% M.G": "g",
+    "Crème liquide 35% MG": "g",
+    "Crème liquide 35% froide": "g"
+  },
+  "Crème liquide UHT": {
+    "Crème U.H.T": "ml",
+    "Crème liquide U.H.T.": "g"
+  },
+  "Crème liquide UHT 35%": {
+    "Crème U.H.T. 35% MG": "g",
+    "Crème UHT 35%": "g",
+    "Crème liquide UHT 35% METRO Chef": "ml",
+    "Crème liquide UHT 35% MG": "g"
+  },
+  "Eau": {
+    "D'eau": "g"
+  },
+  "Échalote": {
+    "- Echalotes": "g",
+    "Echalote": "",
+    "Echalotes": "",
+    "Echalottes": null,
+    "Échalotes fraîches": "g",
+    "Échalotte": ""
+  },
+  "Échalote ciselée": {
+    "Echalotes ciselées": "g",
+    "Echalotte ciselé": "c. à soupe",
+    "Échalote ciselée finement": "",
+    "Échalotes ciselés": "g"
+  },
+  "Épinards": {
+    "Epinard": "g"
+  },
+  "Escalope de foie gras": {
+    "Escalopes de foie gras": ""
+  },
+  "Farine": {
+    "Farine de froment": "g"
+  },
+  "Farine de châtaigne": {
+    "Farine de châtaignes": "g"
+  },
+  "Farine de sarrasin": {
+    "Farine de blé noir": "g"
+  },
+  "Farine T45": {
+    "Farine T45 pâtissière": "g",
+    "Farine pâtissière T45": "g",
+    "Farine type 45": "g"
+  },
+  "Farine T55": {
+    "Farine T 55": "g"
+  },
+  "Fécule de pomme de terre": {
+    "Fécule de pommes de terre": "g"
+  },
+  "Feuille Laurier": {
+    "Feuilles laurier": ""
+  },
+  "Feuilles d'épinard": {
+    "Feuilles d'épinards": "g"
+  },
+  "Feuilles de brick": {
+    "De brick": "feuille",
+    "Brick": "feuille"
+  },
+  "Fève tonka": {
+    "Fèves Tonka": "pincée"
+  },
+  "Fleur de concombre": {
+    "Fleurs de concombre": ""
+  },
+  "Fond blanc de volaille": {
+    "Fond blanc volaille": "ml"
+  },
+  "Fond de volaille": {
+    "- Fond de volaille": "g"
+  },
+  "Framboise": {
+    "Framboises": "g"
+  },
+  "Framboises fraîches": {
+    "De framboises fraîches": "g"
+  },
+  "Gélatine": {
+    "De gélatine": "feuille"
+  },
+  "Gélatine feuille": {
+    "Gélatine en feuille": "g",
+    "Gélatine feuilles": "feuille"
+  },
+  "Grain de café": {
+    "Grains de café": "g"
+  },
+  "Graine de pavot bleu": {
+    "Graines de pavot bleu": "c. à soupe"
+  },
+  "Graines de coriandre": {
+    "Grain de coriandre": "g",
+    "Graine de coriandre": "c. à soupe",
+    "Coriandre en grain": "g"
+  },
+  "Huile d’olive": {
+    "D'huile d'olive": "g",
+    "Huilde d'Olive": "g",
+    "Huile d'olive (fruité vert de préférence)": "c. à soupe",
+    "Huile d'olive cuisson": "g",
+    "Huile d'olive de qualité": "g",
+    "- Huile d'olive bio": "ml"
+  },
+  "Huile d'olive extra vierge": {
+    "Huile olive extra vierge": "ml",
+    "Huile d'olive vierge extra": "ml",
+    "Huile d'olive vierge extra bio": "ml",
+    "Huile d'olive vierge extra italienne": "g",
+    "Huile d'olive vierge extra Méditerranée": "ml"
+  },
+  "Huile de pépin de raisin": {
+    "Huile de pépin raisin": "g",
+    "Huile de pépins de raisin": "ml",
+    "Huile de pépins de raisins": "g",
+    "Huile pépins raisins": "ml"
+  },
+  "Huile de sésame": {
+    "Huile sésame": "g"
+  },
+  "Huile de tournesol": {
+    "Huile tournesol": "ml"
+  },
+  "Jaune d'œuf": {
+    "Jaune d'oeufs": "g",
+    "Jaunes d'oeuf": "g",
+    "Jaunes d'œufs": "g"
+  },
+  "Jus de betterave": {
+    "Jus de betteraves": "g"
+  },
+  "Jus de citron": {
+    "Jus citron": "g",
+    "Jus de Citron Jaune": "g",
+    "Jus de citron jaune pressé": "ml",
+    "Jus de citron pressé": "ml",
+    "Jus de citron bio": "ml",
+    "Jus de citron frais pressé pour l'Europe": "ml"
+  },
+  "Jus de Citron Vert": {
+    "Jus citron vert": "g",
+    "Jus de citron vert frais pressé": "ml",
+    "Jus de citron vert pressé": "ml"
+  },
+  "Jus de rhubarbe": {
+    "Jus rhubarbe": "g"
+  },
+  "Lasagne": {
+    "Lasagnes": "g"
+  },
+  "Linguine": {
+    "Linguines": "g"
+  },
+  "Mangue fraiche": {
+    "Mangues fraîches": ""
+  },
+  "Masse de gélatine": {
+    "Masse gélatine": "g"
+  },
+  "Menthe fraîche": {
+    "De menthe fraîche": "branche"
+  },
+  "Mini poireaux": {
+    "Mini-poireaux": ""
+  },
+  "Mozzarella cossette": {
+    "Mozzarella cossettes": "g"
+  },
+  "Mozzarella Di Bufala": {
+    "Mozzarella di buffala": ""
+  },
+  "Mozzarella Fior Di Latte cosettes": {
+    "Mozarella Fior Di Latte Cosettes": "g"
+  },
+  "Mûre fraiche": {
+    "Mûres fraîches": ""
+  },
+  "Noisette": {
+    "Noisettes": "g"
+  },
+  "Noisette concassée": {
+    "Noisettes concassées": "c. à soupe"
+  },
+  "Œuf": {
+    "Oeuf bio": "",
+    "Oeufs entier": "",
+    "Œuf entier": "g",
+    "Œufs Calibre Gros": "",
+    "Œufs bio": "",
+    "Œufs calibre moyen": "",
+    "Œufs entiers": "g",
+    "Œufs frais": "",
+    "Œufs frais calibre moyen": "",
+    "Œufs très frais": ""
+  },
+  "Oeufs entier liquides": {
+    "Oeufs entiers liquides": "g"
+  },
+  "Oignon": {
+    "Oignon moyen": ""
+  },
+  "Oignon de Roscoff": {
+    "Oignons de Roscoff": "g"
+  },
+  "Oignons blancs": {
+    "Oignon blanc": "",
+    "Oignons blanc": "",
+    "Oignons blancs émincés": "g"
+  },
+  "Oignons ciselés": {
+    "Oignon moyen, haché": ""
+  },
+  "Oignons frits": {
+    "Oignons frit": "g"
+  },
+  "Oignons jaunes": {
+    "Oignon jaune": "",
+    "Oignons jaune": "g",
+    "Oignons jaunes ciselés": ""
+  },
+  "Oignons nouveaux": {
+    "Oignon nouveau": "g"
+  },
+  "Oignons rouges": {
+    "Oignon rouge": "",
+    "Oignons rouge": ""
+  },
+  "Pain de mie": {
+    "De pain de mie": "g"
+  },
+  "Palourde": {
+    "Palourdes": "g"
+  },
+  "Pamplemousse rose": {
+    "Pamplemousses roses": ""
+  },
+  "Patates douces": {
+    "Patate douce": "",
+    "Patates douce": "g"
+  },
+  "Pâte à pralinée noisette": {
+    "Pâte Pralinée noisette": "g"
+  },
+  "Pâte d'amande": {
+    "Pâte d'amandes": "g"
+  },
+  "Pâte d'amande 50%": {
+    "Pâte d'amandes 50%": "g"
+  },
+  "Pâte de noisette": {
+    "Pâte de Noisettes": "g",
+    "Pâte noisette": "g"
+  },
+  "Pectine NH": {
+    "Pectine N.H": "g"
+  },
+  "Persil plat": {
+    "- Persil plat": "g"
+  },
+  "Pesto alla genovese": {
+    "Pesto à la Genovese": "g"
+  },
+  "Petits pois": {
+    "Petit pois": "g",
+    "Petits-pois": "g"
+  },
+  "Pigeon": {
+    "Pigeons": ""
+  },
+  "Pignon": {
+    "Pignons": "g"
+  },
+  "Pignons de pin": {
+    "Pignon de pin": "g"
+  },
+  "Piment concassé": {
+    "Piments concassées": "g"
+  },
+  "Piment oiseau": {
+    "Piments oiseau": ""
+  },
+  "Pleurotes": {
+    "Pleurote": "g",
+    "Pleurottes": "g"
+  },
+  "Poire williams": {
+    "Poires William": "g"
+  },
+  "Poireau": {
+    "Poireaux": "g"
+  },
+  "Pois gourmand": {
+    "Pois gourmands": "g"
+  },
+  "Poivre de Sichuan": {
+    "Poivre Sichuan": "g"
+  },
+  "Poivre mignonnette": {
+    "Poivre mignonette": "g"
+  },
+  "Poivron": {
+    "Poivrons": "g"
+  },
+  "Poivron jaune": {
+    "Poivrons jaunes": ""
+  },
+  "Pomme de terre": {
+    "- Pommes de terre": "g"
+  },
+  "Pomme de terre grenaille": {
+    "Pommes de terre grenaille": "g"
+  },
+  "Pomme de terre grenaille Agata": {
+    "Pommes de terre grenaille Agata": "g"
+  },
+  "Pomme Granny Smith": {
+    "Pomme Granny-Smith": "tranches",
+    "Pommes Granny Smith": "g"
+  },
+  "Poudre d'amande": {
+    "Poudre d'amandes": "g"
+  },
+  "Poudre d'amande blanche": {
+    "Poudre d'amandes blanches": "g"
+  },
+  "Poudre de noisette": {
+    "Poudre de noisettes": "g"
+  },
+  "Pousse d'épinard": {
+    "Pousses d'épinard": "g",
+    "Pousses d'épinards": "g"
+  },
+  "Praliné noisette": {
+    "Praliné Noisettes": "g"
+  },
+  "Purée d'abricot": {
+    "Purée d'abricots": "g"
+  },
+  "Purée de citron jaune": {
+    "Purée citron jaune": "g"
+  },
+  "Purée de fruits de la passion": {
+    "Purée de passion": "g",
+    "Purée fruit de la passion": "g",
+    "Purée passion": "g"
+  },
+  "Purée de marron": {
+    "Purée de marrons": "g"
+  },
+  "Purée de poire Ponthier": {
+    "Purée poire Ponthier": "g"
+  },
+  "Radis en botte": {
+    "Radis botte": ""
+  },
+  "Raisin": {
+    "Raisins": ""
+  },
+  "Riz soufflé": {
+    "Riz soufflé nature": "g"
+  },
+  "Safran en poudre": {
+    "Safran poudre": "g"
+  },
+  "Sauce soja salée": {
+    "Sauce soja salé": "c. à soupe"
+  },
+  "Sel": {
+    "De sel": "g",
+    "Sel de table": null,
+    "Sel fin": "g"
+  },
+  "Shiitaké": {
+    "Shii-také": "g",
+    "Shiitakes": "",
+    "Shitaké": "g"
+  },
+  "Sirop de grenadine": {
+    "Sirop grenadine": "g"
+  },
+  "Spéculoos concassé": {
+    "Spéculoos concassés": "g"
+  },
+  "St Pierre": {
+    "St-Pierre": ""
+  },
+  "STAB2000": {
+    "Stab 2000": "g"
+  },
+  "Sucre": {
+    "De sucre": "g",
+    "Sucre (caramel)": "g",
+    "Sucre pour caramel": "g",
+    "Sucre pour la crème": "g"
+  },
+  "Sucre cassonade": {
+    "Sucre cassonnade": "g"
+  },
+  "Sucre complet muscovado": {
+    "Sucre muscovado": "g"
+  },
+  "Sucre cristal": {
+    "Sucre blanc cristal": "g"
+  },
+  "Sucre glace": {
+    "Sucre glace tamisé": "g"
+  },
+  "Sucre inverti": {
+    "Sucre inverti (trimoline)": "g"
+  },
+  "Sucre semoule": {
+    "Sucre semoule fin": "g",
+    "Sucre semoule pâtissière": "g"
+  },
+  "Superneutrose": {
+    "Super neutrose": "g"
+  },
+  "Suprêmes de volaille": {
+    "- Suprême de volaille": "g"
+  },
+  "Thym": {
+    "De thym": "branche"
+  },
+  "Thym citron": {
+    "Thym-citron": "g"
+  },
+  "Tomate confite": {
+    "Tomates confites": ""
+  },
+  "Tomate en brunoise": {
+    "Tomate brunoise": "g"
+  },
+  "Tomate séchées": {
+    "Tomates séchées": "g"
+  },
+  "Tomates cerises": {
+    "Tomate cerise": "g",
+    "Tomates cerise": "g"
+  },
+  "Tomates concassées": {
+    "Tomates concassées en pulpe fine": "g"
+  },
+  "Vanille": {
+    "De vanille": "gousse",
+    "Gousse de vanille": "g",
+    "Gousses de vanille": "g",
+    "Ousse Vanille": "g",
+    "Ousses Vanille": "g"
+  },
+  "Vinaigre d'alcool blanc": {
+    "De vinaigre d'alcool blanc": "g"
+  },
+  "Vinaigre de Xérès": {
+    "Vinaigre xérès": "g"
+  },
+  "Xanthane": {
+    "Xantane": "g",
+    "Xanthan": "g"
+  }
+}

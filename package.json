@@ -1,0 +1,22 @@
+{
+  "name": "miam-recettes",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "sync:recipes": "node --experimental-strip-types scripts/sync-recipes.mjs",
+    "test": "node --experimental-strip-types --test"
+  },
+  "dependencies": {
+    "effect": "^4.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}
